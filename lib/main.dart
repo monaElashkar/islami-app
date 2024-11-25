@@ -1,43 +1,53 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_application_1/config/language/codegen_loader.g.dart';
-import 'package:flutter_application_1/home.dart';
-import 'package:flutter_application_1/provider.dart';
-import 'package:provider/provider.dart';
+// import 'package:easy_localization/easy_localization.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_application_1/config/language/codegen_loader.g.dart';
+// import 'package:flutter_application_1/core/theme/my_theme.dart';
+// import 'package:flutter_application_1/home.dart';
+// import 'package:flutter_application_1/provider.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:provider/provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await EasyLocalization.ensureInitialized();
-  runApp(EasyLocalization(
-    path: 'assets/translation',
-    supportedLocales: const [
-      Locale('en'),
-      Locale('ar'),
-    ],
-    fallbackLocale: const Locale('en'),
-    saveLocale: true,
-    assetLoader: const CodegenLoader(),
-    child: MultiProvider(providers: [
-      ChangeNotifierProvider(
-        create: (context) => IcrimanteProvider(),
-      ),
-    ], child: const MyApp()),
-  ));
-}
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await EasyLocalization.ensureInitialized();
+//   runApp(EasyLocalization(
+//     path: 'assets/translation',
+//     supportedLocales: const [
+//       Locale('en'),
+//       Locale('ar'),
+//     ],
+//     fallbackLocale: const Locale('en'),
+//     saveLocale: true,
+//     assetLoader: const CodegenLoader(),
+//     child: MultiProvider(providers: [
+//       ChangeNotifierProvider(
+//         create: (context) => IcrimanteProvider(),
+//       ),
+//     ], child: const MyApp()),
+//   ));
+// }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    print("context");
-    return MaterialApp(
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: MyHomePage(),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     print("context");
+//     return ScreenUtilInit(
+//       designSize: Size(300, 700),
+//       minTextAdapt: true,
+//       splitScreenMode: true,
+//       child: MaterialApp(
+//         localizationsDelegates: context.localizationDelegates,
+//         supportedLocales: context.supportedLocales,
+//         locale: context.locale,
+//         theme:context.watch<IcrimanteProvider>().themeMode ,
+//        // darkTheme:MyTheme.dark,
+//        // themeMode:context.watch<IcrimanteProvider>().themeMode?ThemeMode.light:ThemeMode.dark,
+//         home: MyHomePage(),
+//       ),
+//     );
+//   }
+// }
 
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/material.dart';
@@ -150,7 +160,7 @@ class MyApp extends StatelessWidget {
 //       // ),
 //       bottomNavigationBar: BottomNavigationBar(
 //         selectedItemColor: Colors.amber,
-//         type: BottomNavigationBarType.shifting,
+//         type: BottomNavigationBarType.fixed,
 //         backgroundColor: Colors.black26,
 //         useLegacyColorScheme :false,
 //         elevation: 8,
@@ -200,3 +210,69 @@ class MyApp extends StatelessWidget {
 //     );
 //   }
 // }
+
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/helper/cach_helper.dart';
+import 'package:flutter_application_1/hadeth_details/hadeth_details.dart';
+import 'package:flutter_application_1/home/home.dart';
+import 'package:flutter_application_1/my_theme.dart';
+import 'package:flutter_application_1/providers/my_provider.dart';
+import 'package:flutter_application_1/test.dart';
+import 'package:provider/provider.dart';
+
+import 'config/language/codegen_loader.g.dart';
+import 'hadeth_details/hadeth_details_provider.dart';
+import 'sura_details/sura_details.dart';
+
+void main() async{
+    WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+  await CacheHelper.init();
+  runApp(EasyLocalization(
+    path: 'assets/translation',
+    supportedLocales: const [
+      Locale('en'),
+      Locale('ar'),
+    ],
+    fallbackLocale: const Locale('en'),
+    saveLocale: true,
+    assetLoader: const CodegenLoader(),
+    child:
+MultiProvider(providers: [
+    ChangeNotifierProvider<MyProvider>(
+      create: (context) => MyProvider(),
+    ),
+    ChangeNotifierProvider<HadethDetailsProvider>(
+      create: (context) => HadethDetailsProvider()..loadHadethFile(),
+    )
+  ], child: MyApp())));
+}
+
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var provider = Provider.of<MyProvider>(context);
+
+    //provider.languageCode=provider.getLanguage()
+   // ?? context.deviceLocale.languageCode;
+    return MaterialApp(
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      debugShowCheckedModeBanner: false,
+      initialRoute: HomeScreen.routeName,
+      theme: MyThemeData.lightTheme,
+      darkTheme: MyThemeData.darkTheme,
+      themeMode: provider.themeMode,
+      locale: Locale("${provider.languageCode}"),
+      routes: {
+        HomeScreen.routeName: (context) => HomeScreen(),
+        SuraDetailsScreen.routeName: (context) => SuraDetailsScreen(),
+        HadethDetails.routeName: (context) => HadethDetails(),
+      },
+       //home: Test(),
+    );
+  }
+}

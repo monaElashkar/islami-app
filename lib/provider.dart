@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/theme/my_theme.dart';
 
 class IcrimanteProvider with ChangeNotifier{
     int counter1 = 0;
@@ -27,5 +29,16 @@ class IcrimanteProvider with ChangeNotifier{
       counter3++;
       notifyListeners();
   }
+
+  ThemeData themeMode = MyTheme.ligth;
+  changeTheme(){
+    if(themeMode == MyTheme.ligth){
+      themeMode = MyTheme.dark;
+    }else{
+      themeMode = MyTheme.ligth;
+    }
+    notifyListeners();
+  }
 }
+
  
