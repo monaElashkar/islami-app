@@ -267,12 +267,12 @@ class MyApp extends StatelessWidget {
       darkTheme: MyThemeData.darkTheme,
       themeMode: provider.themeMode,
       locale: Locale("${provider.languageCode}"),
-      routes: {
-        HomeScreen.routeName: (context) => HomeScreen(),
-        SuraDetailsScreen.routeName: (context) => SuraDetailsScreen(),
-        HadethDetails.routeName: (context) => HadethDetails(),
-      },
-       //home: Test(),
+      // routes: {
+      //   HomeScreen.routeName: (context) => HomeScreen(),
+      //   SuraDetailsScreen.routeName: (context) => SuraDetailsScreen(),
+      //   HadethDetails.routeName: (context) => HadethDetails(),
+      // },
+       home: Test(),
     );
   }
 }
